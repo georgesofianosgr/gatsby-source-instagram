@@ -7,36 +7,17 @@ const { createRemoteFileNode } = require(`gatsby-source-filesystem`)
  * @param {object} agrugments - The good stuff.
  * @returns {number} fileNodeID - Unique identifier.
  */
-const createFileNode = async ({
-  id,
-  preview,
-  store,
-  cache,
-  createNode,
-  createNodeId,
-  touchNode,
-}) => {
-  const mediaDataCacheKey = `instagram-media-${id}`
-  const cacheMediaData = await cache.get(mediaDataCacheKey)
+const createFileNode = async ({ preview, store, createNode, createNodeId }) => {
   let fileNodeID
-
-  if (cacheMediaData) {
-    fileNodeID = cacheMediaData.fileNodeID
-    touchNode({ nodeId: fileNodeID })
-    return fileNodeID
-  }
 
   try {
     const fileNode = await createRemoteFileNode({
       url: preview,
       store,
-      cache,
       createNode,
       createNodeId,
     })
     fileNodeID = fileNode.id
-
-    await cache.set(mediaDataCacheKey, { fileNodeID })
   } catch (error) {
     console.error(`Could not dowcreate remote file noden, error is: `, error)
   }
@@ -52,10 +33,8 @@ const createFileNode = async ({
 exports.downloadMediaFile = async ({
   datum,
   store,
-  cache,
   createNode,
   createNodeId,
-  touchNode,
 }) => {
   const { carouselImages, id, preview } = datum
 
@@ -64,10 +43,8 @@ exports.downloadMediaFile = async ({
     id,
     preview,
     store,
-    cache,
     createNode,
     createNodeId,
-    touchNode,
   })
 
   /** eslint-disable-next-line require-atomic-updates */
@@ -83,10 +60,8 @@ exports.downloadMediaFile = async ({
       id: imgId,
       preview: imgPreview,
       store,
-      cache,
       createNode,
       createNodeId,
-      touchNode,
     })
 
     /** eslint-disable-next-line require-atomic-updates */
